@@ -1,0 +1,33 @@
+#!/bin/bash
+#BSUB -q q32cores
+#BSUB -o AMBER.o-%J
+#BSUB -e AMBER.e-%J
+#BSUB -J dual-level_opes
+#BSUB -n 32
+##BSUB -R "span[ptile=32]"
+
+# variables for sander. If you don't need it, just leave it blank.
+# The meanings of the variables can be found in the AMBER's manual.
+
+#--- LSF --
+#Environment for AMBER
+#------ AMBER v18 ------
+
+echo job runs at the following node:
+echo $LSB_HOSTS 
+NP=$(echo $LSB_HOSTS | awk '{print NF}')
+NNODE=$(echo $LSB_HOSTS | sed -e "s/ /\n/g" | uniq - | wc -l)
+echo ""
+echo Number of processor: $NP
+echo ""
+source /etc/profile.d/modules.sh
+source ~/.bashrc
+conda init
+conda activate ambertool
+module load mpi/openmpi/4.1.1
+export PATH=/export/home/csming/apps3/5.0.1:$PATH
+export LD_LIBRARY_PATH=/export/home/csming/apps3/5.0.1:$LD_LIBRARY_PATH
+module load plumed/2.9.2_dual_version2
+
+sander -O -i cmd_qmmm.inp -o opes_qmmm.out -c cmd_qmmm.rst -p complex_solv.prmtop -r opes_qmmm.rst -x opes_qmmm.mdcrd -e opes_qmmm.mden -inf opes_qmmm.info
+echo `date`

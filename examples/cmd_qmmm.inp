@@ -1,0 +1,43 @@
+qmmm cmd
+ &cntrl
+  imin = 0, 
+  irest = 0, 
+  ntx = 5, 
+  ntb = 2, 
+  pres0 = 1.0, 
+  ntp = 1,
+  taup = 2.0,
+  cut = 12.0, 
+  ntr = 0, 
+  ntc = 2, 
+  ntf = 2, 
+  temp0 = 300.0, 
+  iwrap=1, 
+  ntt = 3, 
+  gamma_ln = 2.0,  
+  nstlim = 10000000,  
+  dt = 0.0005,
+  ioutfm=1,  
+  ntpr = 1, 
+  ntwx = 100, 
+  ntwr = 100, 
+  ntxo = 2
+  ifqnt=1
+  infe=0
+  plumed=1, 
+  plumedfile='plumed.dat'
+ /
+&qmmm
+  qmmask='@1-10',   
+  qmcut=12.0,   
+  qm_ewald=0,   
+  qm_pme=1,   
+  qmcharge=0, spin=1,  
+  qm_theory='EXTERN',   
+  qmmm_int=1,   
+  qmshake=0,   
+  writepdb=1,  
+ /
+ &orc
+  use_template=1  
+ /
