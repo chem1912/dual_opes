@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+
+#make sure the directory where the orca executable is located is in the PATH and LD_LIBRARY_PATH
+#make sure environment variables for Amber are set
+#Amber call get_orc_forces() to get the forces from ORCA,
+#after reading the ORCA output file, the "old.* prefix was add to orc_job.dat,inpfile.xyz,
+#orc_job.inp and ptchrg.xyz
+
+cat h0_orc_job.tpl > h0_orca_amber.in
+cat >> h0_orca_amber.in << EOF
+! ENGRAD
+! Angs NoUseSym
+%pointcharges "old.ptchrg.xyz"
+*xyzfile 0 1 old.inpfile.xyz
+EOF
+
+$(which orca) h0_orca_amber.in > h0_orca_amber.out
+
+grep "FINAL SINGLE POINT ENERGY" h0_orca_amber.out | awk '{print sprintf("%.12f", $NF * 2625.5002)}' > H0H1
+grep "FINAL SINGLE POINT ENERGY" old.orc_job.dat | awk '{print sprintf("%.12f", $NF * 2625.5002)}' >> H0H1
+
+#if needed, store the wavefunction of each SP calculation at high level
+#step=md_step 
+#cp h0_orca_amber.gbw ${step}.gbw 

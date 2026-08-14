@@ -1,0 +1,123 @@
+# setup the potential
+
+p: DISTANCE ATOMS=1,2 COMPONENTS
+
+#uwall: UPPER_WALLS ARG=p.x,p.y AT=1,1 KAPPA=100000.0,100000.0 EXP=2,2 EPS=1,1 OFFSET=0,0 
+#lwall: LOWER_WALLS ARG=p.x,p.y AT=-1,-1 KAPPA=100000.0,100000.0 EXP=2,2 EPS=1,1 OFFSET=0,0
+
+v1: MATHEVAL PERIODIC=NO ARG=p.x,p.y VAR=x,y ...
+ FUNC=0.5*4*((x+2.5)^2+(y-2)^2)
+...
+
+v2: MATHEVAL PERIODIC=NO ARG=p.x,p.y VAR=x,y ...
+ FUNC=0.5*4*((x-2.5)^2+(y-2)^2)+10
+...
+
+ene: MATHEVAL PERIODIC=NO ARG=v1,v2 VAR=x,y ...
+  FUNC=0.5*(x+y)-0.5*sqrt((x-y)^2+4*15)
+...
+
+potential: BIASVALUE ARG=ene
+
+OPES_METAD ...
+  LABEL=opes
+  ARG=p.x
+  FILE=Kernels.data
+  #STATE_RFILE=compressed.Kernels
+  STATE_WFILE=compressed.Kernels
+  PACE=500
+  TEMP=600
+  BARRIER=40
+  #EXCLUDED_REGION=target
+  RESTART=NO
+  STATE_WSTRIDE=2000*1
+  STORE_STATES
+... OPES_METAD
+
+
+DUAL_OPES_METAD_HIGH_LEVEL ...
+  LABEL=OPESmetad_high_adjoint
+  ARG=p.x,p.y
+  TEMP=600
+  PACE=500
+  BARRIER=40
+  BIASFACTOR=1
+  PREFACTOR=-1
+  NLIST #turn on neighbor list (big difference with 2 or more CVs)
+  FILE=KernelsE2_adjoint.data
+  STATE_WFILE=STATE.high.adjoint
+  STATE_WSTRIDE=2000*1
+  #STATE_RFILE=STATE.s1ccv12
+  RESTART=NO
+  #NO_ZED
+  STORE_STATES
+  #EXTRA_BIAS=opes.bias 
+  #EXCLUDED_REGION=target
+  CALL_QMPROGRAM
+... DUAL_OPES_METAD_HIGH_LEVEL
+
+DUAL_OPES_METAD_LOW_LEVEL ...
+   LABEL=OPESmetad_low_adjoint
+   ARG=p.x,p.y
+   TEMP=600
+   PACE=500
+   BARRIER=40
+   BIASFACTOR=1
+   PREFACTOR=1
+   NLIST #turn on neighbor list (big difference with 2 or more CVs)
+   FILE=KernelsE1_adjoint.data
+   STATE_WFILE=STATE.low.adjoint
+   STATE_WSTRIDE=2000*1
+   #STATE_RFILE=STATE.s1ccv11
+   RESTART=NO
+   #NO_ZED
+   STORE_STATES
+   #EXTRA_BIAS=opes.bias
+   #EXCLUDED_REGION=target
+... DUAL_OPES_METAD_LOW_LEVEL
+
+DUAL_OPES_METAD_HIGH_LEVEL ...
+  LABEL=OPESmetad_high_marginal
+  ARG=p.x
+  TEMP=600
+  PACE=500
+  BARRIER=40
+  BIASFACTOR=1
+  PREFACTOR=1
+  #NLIST #turn on neighbor list (big difference with 2 or more CVs)
+  FILE=KernelsE2_marginal.data
+  STATE_WFILE=STATE.high.marginal
+  STATE_WSTRIDE=2000*1
+  #STATE_RFILE=STATE.s1ccv12
+  RESTART=NO
+  #NO_ZED
+  STORE_STATES
+  #EXTRA_BIAS=opes.bias 
+  #EXCLUDED_REGION=target
+... DUAL_OPES_METAD_HIGH_LEVEL
+
+DUAL_OPES_METAD_LOW_LEVEL ...
+   LABEL=OPESmetad_low_marginal
+   ARG=p.x
+   TEMP=600
+   PACE=500
+   BARRIER=40
+   BIASFACTOR=1
+   PREFACTOR=-1
+   #NLIST #turn on neighbor list (big difference with 2 or more CVs)
+   FILE=KernelsE1_marginal.data
+   STATE_WFILE=STATE.low.marginal
+   STATE_WSTRIDE=2000*1
+   #STATE_RFILE=STATE.s1ccv11
+   RESTART=NO
+   #NO_ZED
+   STORE_STATES
+   #EXTRA_BIAS=opes.bias
+   #EXCLUDED_REGION=target
+... DUAL_OPES_METAD_LOW_LEVEL
+
+
+#FLUSH STRIDE=1
+#PRINT STRIDE=100 ARG=p.x,p.y,potential.bias,opes.bias,OPESmetad_low_adjoint.bias,OPESmetad_low_marginal.bias,OPESmetad_high_adjoint.bias,OPESmetad_high_marginal.bias,OPESmetad_high_adjoint.deltaH,OPESmetad_high_marginal.deltaH FILE=colvar.try19
+PRINT STRIDE=100 ARG=p.x,p.y,potential.bias,opes.*,OPESmetad_low_adjoint.*,OPESmetad_low_marginal.*,OPESmetad_high_adjoint.*,OPESmetad_high_marginal.*,OPESmetad_high_adjoint.* FILE=colvar
+ENDPLUMED
