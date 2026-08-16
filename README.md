@@ -10,6 +10,44 @@ This repository contains the modified Plumed code, scripts and example input fil
 
 In the extended version, the correction potential contains two parts depending on the marginal distribution of  reaction coordinate (s) and the reaction coordinate (s)-correction variable ($\xi$) adjoint distribution respectively. They both can be split into the low-level-probability-distribution-depended term and  the high-level term. Therefore in the extended version, correction potential is split into 4 terms. If s is independent of $\xi$, the 4 terms reduce to the 2 marginal terms in the original formation. As shown in **examples/glycine/plumed.dat**, there are 4 blocks for correction potential after OPES block (the OPES block should be put first). When  USE_TOT_BIAS was set for each block, the total bias potential (OPES bias plus correction potential) will be use for reweighing the kernels, which may help to match the low-level and high-level probability distribution in the correction variable space. The CALL_QMPROGRAM keyword should be set in the first DUAL_OPES_METAD_HIGH_LEVEL block (OPESmetad_high_adjoint) to get the high-level energy with QM program.
 
+# Introduction to the Method
+
+The probability distribution of reaction coordinate $s$ at a high-level can be written as ensemble average at a low-level according to thermodynamics perturbation formula:
+
+<img src="./README.assets/image-20260816095931266.png" alt="image-20260816095931266" style="zoom: 67%;" /> 
+
+which can also be written as a conditional average:
+
+<img src="./README.assets/image-20260816100112469.png" alt="image-20260816100112469" style="zoom:67%;" /> 
+
+$ Z_L$ and $Z_H$ are the partition function at the low-level and the high-level, respectively. $\langle e^{\beta [U_L(r)-U_H(r)]} \rangle_{L|s} $ is associated with the free energy profile correction, which is dominated by the configurations with large $U_L(r)-U_H(r)$. These configurations may be difficult to sample at a low-level PES, hindering the convergence of free energy profile correction. The idea of Dual-Level OPES is on-the-fly building a correction potential (in a pre-defined subspace, correction variable space $\xi$), to make the low-level and high-level FES closer. Therefore more important configurations can be sampled. 
+
+The correction potential was constructed to change the conditional distribution $P (\xi|s)$ only, while reserve the marginal distribution $P(s)$. The additional normal OPES bias was applied to change the $P(s)$ to its Well-tempered distribution. The correction potential make the adjoint distribution $P(s,\xi)$ closer to the target distribution $P^{tg}(s,\xi)$:
+
+ <img src="./README.assets/image-20260816102350230.png" alt="image-20260816102350230" style="zoom:67%;" />
+
+The correction potential is:
+
+<img src="./README.assets/image-20260816102428372.png" alt="image-20260816102428372" style="zoom:67%;" />
+
+in which the conditional probability can be obtained by definition:
+
+![image-20260816102529253](./README.assets/image-20260816102529253.png)
+
+So the correction potential contains a adjoint part and a marginal part:
+
+![image-20260816102707119](./README.assets/image-20260816102707119.png)
+
+If s and $\xi$ are independent variables, which mean:
+
+![image-20260816102826786](./README.assets/image-20260816102826786.png)
+
+The formulation of correction potential reduces to eq 17 in our paper:
+
+![image-20260816103157194](./README.assets/image-20260816103157194.png)
+
+In actual implement, each log probability part of correction potential was handled separately, like the original OPES method.  
+
 # Implements
 
 ![image-20260815010132242](./README.assets/image-20260815010132242.png)
