@@ -24,7 +24,7 @@ $ Z_L$ and $Z_H$ are the partition function at the low-level and the high-level,
 
 The correction potential was constructed to change the conditional distribution $P (\xi|s)$ only, while reserve the marginal distribution $P(s)$. The additional normal OPES bias was applied to change the $P(s)$ to its Well-tempered distribution. The correction potential make the adjoint distribution $P(s,\xi)$ closer to the target distribution $P^{tg}(s,\xi)$:
 
- ![image-20260816104920450](./README.assets/image-20260816104920450.png)
+ ![image-20260816105339952](./README.assets/image-20260816105339952.png)
 
 The correction potential is:
 
@@ -36,15 +36,15 @@ in which the conditional probability can be obtained by definition:
 
 So the correction potential contains a adjoint part and a marginal part:
 
-![image-20260816102707119](./README.assets/image-20260816102707119.png)
+![image-20260816105401840](./README.assets/image-20260816105401840.png)
 
 If s and $\xi$ are independent variables, which mean:
 
-![image-20260816102826786](./README.assets/image-20260816102826786.png)
+![image-20260816105417561](./README.assets/image-20260816105417561.png)
 
 The formulation of correction potential reduces to eq 17 in our paper:
 
-![image-20260816103157194](./README.assets/image-20260816103157194.png)
+![image-20260816105442066](./README.assets/image-20260816105442066.png)
 
 In actual implement, each log probability part of correction potential was handled separately, like the original OPES method.  
 
