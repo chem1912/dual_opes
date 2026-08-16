@@ -14,25 +14,25 @@ In the extended version, the correction potential contains two parts depending o
 
 The probability distribution of reaction coordinate $s$ at a high-level can be written as ensemble average at a low-level according to thermodynamics perturbation formula:
 
-<img src="./README.assets/image-20260816095931266.png" alt="image-20260816095931266" style="zoom: 67%;" /> 
+![image-20260816104830783](./README.assets/image-20260816104830783.png) 
 
 which can also be written as a conditional average:
 
-<img src="./README.assets/image-20260816100112469.png" alt="image-20260816100112469" style="zoom:67%;" /> 
+![image-20260816104856948](./README.assets/image-20260816104856948.png) 
 
 $ Z_L$ and $Z_H$ are the partition function at the low-level and the high-level, respectively. $\langle e^{\beta [U_L(r)-U_H(r)]} \rangle_{L|s} $ is associated with the free energy profile correction, which is dominated by the configurations with large $U_L(r)-U_H(r)$. These configurations may be difficult to sample at a low-level PES, hindering the convergence of free energy profile correction. The idea of Dual-Level OPES is on-the-fly building a correction potential (in a pre-defined subspace, correction variable space $\xi$), to make the low-level and high-level FES closer. Therefore more important configurations can be sampled. 
 
 The correction potential was constructed to change the conditional distribution $P (\xi|s)$ only, while reserve the marginal distribution $P(s)$. The additional normal OPES bias was applied to change the $P(s)$ to its Well-tempered distribution. The correction potential make the adjoint distribution $P(s,\xi)$ closer to the target distribution $P^{tg}(s,\xi)$:
 
- <img src="./README.assets/image-20260816102350230.png" alt="image-20260816102350230" style="zoom:67%;" />
+ ![image-20260816104920450](./README.assets/image-20260816104920450.png)
 
 The correction potential is:
 
-<img src="./README.assets/image-20260816102428372.png" alt="image-20260816102428372" style="zoom:67%;" />
+![image-20260816104944877](./README.assets/image-20260816104944877.png)
 
 in which the conditional probability can be obtained by definition:
 
-![image-20260816102529253](./README.assets/image-20260816102529253.png)
+![image-20260816105002542](./README.assets/image-20260816105002542.png)
 
 So the correction potential contains a adjoint part and a marginal part:
 
